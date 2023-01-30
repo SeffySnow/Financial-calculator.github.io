@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>financial 2</title>
+    <meta charset="UTF-8">
+    <title>financial calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="financial_calculator.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+<body>
+<div id="main_page">
+<div id ="finance_manager" data-name ="budget">
+    <h1 id="title">FINANCE MANAGEMENT APPLICATION</h1>
+    <div id ="budget" class="input_box">
+        <h1  class="header_input">Please Enter Your Principle Amount</h1>
+        <input type ="number"  id="budget_input" name="budget"   class="inputs" data-name ="budget">
+        <button class="btn_input" type="button" onclick=budget()>Add</button>
+        <span class="error" data-error="digits"></span>
+    </div>
+    <div id="expense" class="input_box" data-name ="expense">
+        <h1  class="header_input">Please Enter Name Of Expense</h1>
+        <input id="expenses_name" name ="expenses_name" type="text" data-name ="expense"  class="inputs" style="margin-bottom: 3%">
+        <span class="error" data-error="alphabets"></span>
+        <h1  class="header_input">Please Enter Amount Of Expense</h1>
+        <input id="expenses_amount" name ="expenses_amount" type="number" data-name ="expense"  class="inputs">
+        <span class="error" data-error="digits"></span>
+        <button style="background-color: red" class="btn_input" type="button" onclick=expense()>Add Expense</button>
+    </div>
+</div>
+<div id="values">
+    <div>
+        <h1 >Budget</h1>
+        <i class="bi bi-currency-dollar"><h2  id = "initial_amount" style="color:#34ef53">0</h2></i>
+    </div>
+    <div>
+        <h1 >Expense</h1>
+        <i class="bi bi-currency-dollar" ><h2  id = "expense_presentation" style="color:red">0</h2></i>
+    </div>
+    <div>
+        <h1>Balance</h1>
+        <i class="bi bi-currency-dollar" ><h2  id = "Balance" >0</h2></i>
+    </div>
+</div>
+<div id="list_of_expenses">
+    <h2 class="h_list" style="float:left">Expense Name</h2>
+     <h2 class="h_list" style="float:left">Expense Value</h2>
+        <ul id = "list">
+
+
+        </ul>
+
+</div>
+</div>
+<div id="edit">
+
+    <h1 id="h_edit">Edit</h1>
+    <label for="name_edit">Name</label>
+    <input id = "name_edit" placeholder="Enter New Name" name = "nw_name" type="text">
+    <label for="value_edit">Amount</label>
+    <input id = "value_edit" placeholder="Enter New Amount" name="nw_value" type="number">
+    <button id="close" onclick=close_page()>Close</button>
+    <button id ="edit_btn" >Edit</button>
+</div>
+<div id="blur">
+
+</div>
+<script>
+
+    function budget(){
+        let input = document.getElementById("budget_input");
+        let budget = document.getElementById("initial_amount");
+
+        if(input.value !== 0){
+            let pattern = /^[0-9]+$/i;
+            if(pattern.test(input.value)){
+                   budget.innerHTML = input.value;
+                    input.classList.remove("err");
+                    return Number(input.value)
+
+                }
+            else {
+                    input.value = "";
+                    input.placeholder = "It Should Be Number";
+                    input.classList.add("err");
+                    return false
+                }
+            }
+        else{
+            alert("Please Fill The Budget ")
+            return false
+        }
+    }
+    let id = Number(0);
+    function expense(){
+
+            if(budget() !== false){
+                    let expense_name = document.getElementById("expenses_name");
+                    let expense_amount = document.getElementById("expenses_amount");
+                     let balance = document.getElementById("Balance")
+                if(expense_name.value !== ""){
+                    let pattern = /^[a-z]+[1-9]?/i;
+                    if(pattern.test(expense_name.value.trim())){
+                         expense_name.classList.remove("err");
+                        if(expense_amount.value !== ""){
+                            let pattern =  /^[0-9]+$/i;
+
+                            if(pattern.test(expense_amount.value)){
+                                expense_amount.classList.remove("err");
+                                let expense_pre = document.getElementById("expense_presentation");
+
+                                let total_expense =    Number(expense_amount.value) + Number(expense_pre.innerHTML);
+
+                                let temp = Number(document.getElementById("initial_amount").innerHTML) - total_expense;
+
+
+                                if(temp >= 0) {
+
+                                    expense_pre.innerHTML = Number(expense_pre.innerHTML) + Number(expense_amount.value);
+                                    let li = document.createElement("li");
+                                    let span_name = document.createElement("span");
+                                    let span_cost = document.createElement("span");
+                                    span_name.classList.add("name");
+                                    span_cost.classList.add("cost");
+                                    let list = document.getElementById("list");
+                                    list.appendChild(li)
+                                     li.appendChild(span_name);
+                                    li.appendChild(span_cost);
+                                    span_name.innerHTML =expense_name.value.trim()
+                                    span_cost.innerHTML =expense_amount.value;
+                                    list.style.display = "block";
+                                    let rmv = document.createElement("span");
+                                    let edt = document.createElement("span");
+                                    li.appendChild(edt);
+                                    li.appendChild(rmv);
+                                    edt.innerHTML = "edit";
+                                    edt.classList.add("edit");
+                                    rmv.innerHTML = "remove";
+                                    rmv.classList.add("remove");
+
+
+                                    rmv.onclick = function(){
+                                        this.parentElement.remove();
+                                        let minus_expense = this.parentElement.getElementsByTagName("span")[1].innerHTML;
+                                        expense_pre.innerHTML = Number(expense_pre.innerHTML) - Number(minus_expense);
+                                        balance.innerHTML = Number(balance.innerHTML) + Number(minus_expense);
+
+                                    }
+                                    let main_page = document.getElementById("main_page");
+                                    let edit = document.getElementById("edit");
+                                    let blur = document.getElementById("blur");
+                                    edt.onclick = function(){
+                                        let li_tracker = this.parentElement;
+                                        edit.style.display = "block";
+                                        blur.style.display = "block";
+                                        main_page.style.opacity = "0.7" ;
+                                        let edit_btn = document.getElementById("edit_btn");
+                                        let pre_name = li_tracker.getElementsByTagName("span")[0].innerHTML;
+                                        let pre_value = li_tracker.getElementsByTagName("span")[1].innerHTML;
+                                        console.log(li_tracker.getElementsByTagName("span")[0].innerHTML)
+
+                                        document.getElementById("name_edit").value=pre_name
+                                        document.getElementById("value_edit").value = pre_value;
+                                          edit_btn.onclick = function(){
+                                                let new_name = document.getElementById("name_edit").value;
+                                                let new_value = document.getElementById("value_edit").value;
+                                                if(new_value!=="" && new_name!==""){
+                                                    expense_pre.innerHTML = (Number(expense_pre.innerHTML) - Number(li_tracker.getElementsByTagName("span")[1].innerHTML)) + Number(new_value) ;
+                                                    li_tracker.getElementsByTagName("span")[0].innerHTML = new_name;
+                                                     li_tracker.getElementsByTagName("span")[1].innerHTML = new_value;
+                                                    balance.innerHTML = Number(document.getElementById("initial_amount").innerHTML) - Number(expense_pre.innerHTML);
+
+                                                    close_page();
+                                                }
+                                                else{
+                                                    alert("You have to fill all the fields")
+                                                }
+
+                                            }
+                                    }
+
+
+                                    balance.innerHTML = Number(document.getElementById("initial_amount").innerHTML) - Number(expense_pre.innerHTML);
+                                    expense_name.value ="";
+                                    expense_amount.value = "";
+                                }
+                                else{
+                                    alert("The total amount of expenses can't be greater than the budget")
+                                }
+                            }else{
+                                expense_amount.value = "";
+                                expense_amount.placeholder = "It Should Be Number";
+                                expense_amount.classList.add("err");
+                            }
+
+
+                        } else{
+                            alert("Please Fill All The Fields")
+                        }
+                    }
+                    else{
+                        expense_name.value = "";
+                        expense_name.placeholder = "It Should Be Character";
+                        expense_name.classList.add("err");
+                    }
+
+                }
+                else{
+                    alert("Please Fill All The Fields")
+                }
+            }
+            else{
+                alert("Please First Fill The Bubget Field")
+            }
+    }
+    let main_page = document.getElementById("main_page");
+    let edit = document.getElementById("edit");
+    let edit_btn = document.getElementById("edit_btn");
+    let blur = document.getElementById("blur");
+
+    let new_name = document.getElementById("name_edit").value;
+    let new_value = document.getElementById("value_edit").value;
+   function close_page(){
+        blur.style.display = "none";
+         edit.style.display = "none";
+       main_page.style.opacity = "1" ;
+       new_name="";
+       new_value="";
+
+
+    }
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
